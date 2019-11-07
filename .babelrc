@@ -1,0 +1,40 @@
+{
+  "comments": false,
+  presets: [
+    ['@babel/preset-env', {
+      modules: 'commonjs',
+      targets: {
+        node: 'current'
+      },
+      useBuiltIns: 'usage',
+      corejs: 3
+    }],
+    [
+      'minify',
+      {
+        builtIns: false
+      }
+    ]
+  ],
+  plugins: [
+    ['dynamic-import-node', { "noInterop": true }],
+    '@babel/plugin-transform-arrow-functions',
+    [
+      "module-resolver",
+      {
+        cwd: "./",
+        root: [
+          "./src"
+        ]
+      }
+    ],
+    ['@babel/plugin-proposal-class-properties',
+      {
+        loose: true
+      }
+    ],
+    '@babel/plugin-proposal-object-rest-spread',
+    '@babel/plugin-transform-modules-commonjs'
+    // '@babel/plugin-transform-async-to-generator',
+  ]
+}
