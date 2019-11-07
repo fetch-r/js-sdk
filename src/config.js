@@ -1,6 +1,6 @@
 require('dotenv').config()
 
-export const auth = {
+export default {
   host: process.env.FETCHR_HOST,
   token: process.env.FETCHR_TOKEN
 };

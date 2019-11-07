@@ -1,5 +1,5 @@
 {
-  "name": "@fetchr/sdk",
+  "name": "@nexys/fetchr",
   "version": "0.0.0",
   "main": "dist/index.js",
   "dependencies": {

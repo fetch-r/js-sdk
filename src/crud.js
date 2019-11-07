@@ -3,26 +3,30 @@ import request from './request';
 import { host, token } from './config';
 import HttpError from './http-error';
 
-export const handleResult = r => {
+export const handleResult = fullReponse => {
+  const r = fullReponse.body;
+
+  const { statusCode } = fullReponse;
+
+  if (statusCode !== 200) {
+    return new HttpError(r);
+  }
+
   if (typeof r === 'boolean') {
     return {status: r};
   }
-
-  if (!r.error) {
-    return r;
-  }
-
-  return new HttpError(r.message + ' - ' + r.error);
+  
+  return r;
 }
 
 export const data = async query => {  
-  const result = await request('/query/data', query);
+  const result = await request('/data', query);
 
   return handleResult(result);
 };
 
 export const mutate = async query => {
-  const result = await request(`/query/mutate`,  query);
+  const result = await request(`/mutate`,  query);
   return handleResult(result);
 };
 
@@ -52,9 +56,10 @@ export const detailById = async (entity, id) => {
   return wrapperDetail(l, entity);
 };
 
-export const detail = async (entity, params) => {
+export const detail = async (entity, params, projection = {}) => {
   const query = {
     [entity]: {
+      projection,
       filters: params
     }
   };
@@ -64,11 +69,13 @@ export const detail = async (entity, params) => {
   return wrapperDetail(l, entity);
 };
 
+// deprecated: use mutate
 export const insert = async (entity, data) => {
   const result = await request(`/query/${entity.toLowerCase()}/insert`, { data });
   return handleResult(result);
 };
 
+// deprecated: use mutate
 export const update = async (entity, params, data) => {
   const url = `/query/${entity.toLowerCase()}/update`;
   const body = {params, data};
@@ -78,6 +85,7 @@ export const update = async (entity, params, data) => {
   return handleResult(result);
 };
 
+// deprecated: use mutate
 export const deleteById = async (entity, id) => {
   if (typeof id !== 'number') {
     return new HttpError('argument has to be of type number', 500);
@@ -86,6 +94,7 @@ export const deleteById = async (entity, id) => {
   return handleResult(result);
 };
 
+// deprecated: use mutate
 // does not work - to check with latest version of crud
 export const deleteFilter = async (entity, filters) => {
 
@@ -168,6 +177,7 @@ export const deleteIds = async (entity, ids) => {
   return await Crud.data(query);
 };
 
+// deprecated: use data
 export const count = async (entity, filters = {}) => {
   const body = {params: {filters}}
   return await request(`/query/${entity.toLowerCase()}/count`, body);
